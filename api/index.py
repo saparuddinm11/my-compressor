@@ -88,5 +88,4 @@ def compress():
     
     return "Tipe file tidak diizinkan!"
 
-if __name__ == '__main__':
-    app.run(debug=True)
+
