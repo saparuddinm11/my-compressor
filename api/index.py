@@ -5,14 +5,13 @@ from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
 app = Flask(__name__)
-app.secret_key = "secret_super_aman"
+app.secret_key = "secret_aman_sekali"
 
-# Vercel hanya mengizinkan penyimpanan sementara di folder /tmp
+# Vercel hanya membolehkan tulis file di folder /tmp
 UPLOAD_FOLDER = '/tmp'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'pdf'}
 
 def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'pdf'}
 
 @app.route('/')
 def index():
@@ -25,7 +24,7 @@ def compress():
     
     file = request.files['file']
     if file.filename == '' or not allowed_file(file.filename):
-        return "File tidak valid!"
+        return "File tidak valid atau format salah!"
 
     filename = secure_filename(file.filename)
     input_path = os.path.join(UPLOAD_FOLDER, filename)
@@ -38,6 +37,7 @@ def compress():
         if ext in ['jpg', 'jpeg', 'png']:
             img = Image.open(input_path)
             if img.mode in ("RGBA", "P"): img = img.convert("RGB")
+            # Kompresi gambar
             img.save(output_path, "JPEG", optimize=True, quality=30)
         elif ext == 'pdf':
             reader = PdfReader(input_path)
@@ -49,4 +49,4 @@ def compress():
 
         return send_file(output_path, as_attachment=True)
     except Exception as e:
-        return f"Waduh, ada masalah: {e}"
+        return f"Gagal kompres: {e}"
