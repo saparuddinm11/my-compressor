@@ -87,5 +87,3 @@ def compress():
             return f"Error: {e}"
     
     return "Tipe file tidak diizinkan!"
-
-
