@@ -4,10 +4,10 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
-app = Flask(__name__)
+# Tambahkan template_folder agar Flask tidak bingung mencari file HTML
+app = Flask(__name__, template_folder='../templates')
 app.secret_key = "secret_aman_sekali"
 
-# Vercel hanya membolehkan tulis file di folder /tmp
 UPLOAD_FOLDER = '/tmp'
 
 def allowed_file(filename):
@@ -21,15 +21,15 @@ def index():
 def compress():
     if 'file' not in request.files:
         return redirect(request.url)
-    
+
     file = request.files['file']
     if file.filename == '' or not allowed_file(file.filename):
-        return "File tidak valid atau format salah!"
+        return "File tidak valid!"
 
     filename = secure_filename(file.filename)
     input_path = os.path.join(UPLOAD_FOLDER, filename)
     output_path = os.path.join(UPLOAD_FOLDER, "compressed_" + filename)
-    
+
     file.save(input_path)
     ext = filename.rsplit('.', 1)[1].lower()
 
@@ -37,7 +37,6 @@ def compress():
         if ext in ['jpg', 'jpeg', 'png']:
             img = Image.open(input_path)
             if img.mode in ("RGBA", "P"): img = img.convert("RGB")
-            # Kompresi gambar
             img.save(output_path, "JPEG", optimize=True, quality=30)
         elif ext == 'pdf':
             reader = PdfReader(input_path)
@@ -49,4 +48,4 @@ def compress():
 
         return send_file(output_path, as_attachment=True)
     except Exception as e:
-        return f"Gagal kompres: {e}"
+        return f"Error: {e}"
