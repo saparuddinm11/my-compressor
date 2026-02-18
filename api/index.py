@@ -49,3 +49,7 @@ def compress():
         return send_file(output_path, as_attachment=True)
     except Exception as e:
         return f"Error: {e}"
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory('../', 'sitemap.xml', mimetype='application/xml')
