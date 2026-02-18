@@ -1,10 +1,10 @@
-from flask import Flask, render_template, request, send_file, redirect
+from flask import Flask, render_template, request, send_file, redirect, send_from_directory
 import os
 from werkzeug.utils import secure_filename
 from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
-# Tambahkan template_folder agar Flask tidak bingung mencari file HTML
+# Inisialisasi app hanya satu kali di awal
 app = Flask(__name__, template_folder='../templates')
 app.secret_key = "secret_aman_sekali"
 
@@ -16,6 +16,11 @@ def allowed_file(filename):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    # os.getcwd() akan mengambil direktori utama proyek di Vercel
+    return send_from_directory(os.getcwd(), 'sitemap.xml', mimetype='application/xml')
 
 @app.route('/compress', methods=['POST'])
 def compress():
@@ -50,13 +55,4 @@ def compress():
     except Exception as e:
         return f"Error: {e}"
 
-import os
-from flask import Flask, render_template, send_from_directory
-
-# ... kode app lainnya ...
-
-@app.route('/sitemap.xml')
-def sitemap():
-    # Mengambil file sitemap dari direktori utama proyek
-    return send_from_directory(os.getcwd(), 'sitemap.xml')
-
+# Jangan tambahkan kode 'app = Flask' lagi di bawah sini
