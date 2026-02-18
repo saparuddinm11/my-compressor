@@ -50,6 +50,13 @@ def compress():
     except Exception as e:
         return f"Error: {e}"
 
+import os
+from flask import Flask, render_template, send_from_directory
+
+# ... kode app lainnya ...
+
 @app.route('/sitemap.xml')
 def sitemap():
-    return send_from_directory('../', 'sitemap.xml', mimetype='application/xml')
+    # Mengambil file sitemap dari direktori utama proyek
+    return send_from_directory(os.getcwd(), 'sitemap.xml')
+
