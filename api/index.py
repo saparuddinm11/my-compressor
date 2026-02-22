@@ -31,6 +31,11 @@ def manifest():
 def sw():
     return send_from_directory(os.getcwd(), 'sw.js', mimetype='application/javascript')
 
+# TAMBAHKAN INI: Agar browser bisa membaca ikon di folder static
+@app.route('/static/<path:filename>')
+def send_static(filename):
+    return send_from_directory('../static', filename)
+
 @app.route('/compress', methods=['POST'])
 def compress():
     if 'file' not in request.files:
