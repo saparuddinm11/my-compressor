@@ -34,9 +34,10 @@ def sw():
 # TAMBAHKAN INI: Agar browser bisa membaca ikon di folder static
 @app.route('/static/<path:filename>')
 def send_static(filename):
-    # Menggunakan path absolut agar server Vercel tidak bingung
-    static_path = os.path.join(app.root_path, '..', 'static')
-    return send_from_directory(static_path, filename)
+    # Mengarahkan ke folder static yang sejajar dengan folder api
+    root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    static_folder = os.path.join(root_path, 'static')
+    return send_from_directory(static_folder, filename)
     
 @app.route('/compress', methods=['POST'])
 def compress():
@@ -70,6 +71,7 @@ def compress():
         return send_file(output_path, as_attachment=True)
     except Exception as e:
         return f"Error: {e}"
+
 
 
 
