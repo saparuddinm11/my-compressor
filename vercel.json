@@ -1,12 +1,10 @@
 {
+  "version": 2,
   "rewrites": [
-    {
-      "source": "/static/(.*)",
-      "destination": "/static/$1"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/api/index"
-    }
+    { "source": "/static/(.*)", "destination": "/static/$1" },
+    { "source": "/manifest.json", "destination": "/manifest.json" },
+    { "source": "/sw.js", "destination": "/sw.js" },
+    { "source": "/sitemap.xml", "destination": "/sitemap.xml" },
+    { "source": "/(.*)", "destination": "/api/index" }
   ]
 }
