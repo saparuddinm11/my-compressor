@@ -22,6 +22,15 @@ def sitemap():
     # os.getcwd() akan mengambil direktori utama proyek di Vercel
     return send_from_directory(os.getcwd(), 'sitemap.xml', mimetype='application/xml')
 
+# Rute tambahan untuk PWA
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(os.getcwd(), 'manifest.json', mimetype='application/json')
+
+@app.route('/sw.js')
+def sw():
+    return send_from_directory(os.getcwd(), 'sw.js', mimetype='application/javascript')
+
 @app.route('/compress', methods=['POST'])
 def compress():
     if 'file' not in request.files:
@@ -54,5 +63,3 @@ def compress():
         return send_file(output_path, as_attachment=True)
     except Exception as e:
         return f"Error: {e}"
-
-# Jangan tambahkan kode 'app = Flask' lagi di bawah sini
