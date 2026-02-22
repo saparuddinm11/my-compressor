@@ -34,7 +34,7 @@ def sw():
 # TAMBAHKAN INI: Agar browser bisa membaca ikon di folder static
 @app.route('/static/<path:filename>')
 def send_static(filename):
-    return send_from_directory('../static', filename)
+    return send_from_directory(os.path.join(os.getcwd(), 'static'), filename)
 
 @app.route('/compress', methods=['POST'])
 def compress():
@@ -68,3 +68,4 @@ def compress():
         return send_file(output_path, as_attachment=True)
     except Exception as e:
         return f"Error: {e}"
+
