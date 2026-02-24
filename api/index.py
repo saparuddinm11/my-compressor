@@ -5,6 +5,7 @@ from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
 # Inisialisasi app
+# '../templates' karena folder templates berada di luar folder api
 app = Flask(__name__, template_folder='../templates')
 app.secret_key = "secret_aman_sekali"
 
