@@ -5,13 +5,12 @@ from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
 # Inisialisasi app
-# '../templates' karena folder templates berada di luar folder api
 app = Flask(__name__, template_folder='../templates')
 app.secret_key = "secret_aman_sekali"
 
 UPLOAD_FOLDER = '/tmp'
 
-# Path ke direktori utama (root) agar bisa mengambil folder static
+# Path ke direktori utama (root) agar bisa mengambil file di luar folder api
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def allowed_file(filename):
@@ -25,15 +24,17 @@ def index():
 
 @app.route('/manifest.json')
 def manifest():
+    # Mengambil manifest.json dari folder root
     return send_from_directory(ROOT_DIR, 'manifest.json', mimetype='application/json')
 
 @app.route('/sw.js')
 def sw():
+    # Mengambil sw.js dari folder root
     return send_from_directory(ROOT_DIR, 'sw.js', mimetype='application/javascript')
 
 @app.route('/static/<path:filename>')
 def send_static(filename):
-    # Memaksa server mencari folder static di luar folder api
+    # Mengambil ikon dari folder /static/ yang ada di root
     static_folder = os.path.join(ROOT_DIR, 'static')
     return send_from_directory(static_folder, filename)
 
