@@ -4,11 +4,14 @@ from werkzeug.utils import secure_filename
 from PIL import Image
 from PyPDF2 import PdfReader, PdfWriter
 
-# Inisialisasi app hanya satu kali di awal
+# Inisialisasi app
 app = Flask(__name__, template_folder='../templates')
 app.secret_key = "secret_aman_sekali"
 
 UPLOAD_FOLDER = '/tmp'
+
+# Path ke direktori utama (root) agar bisa mengambil folder static
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in {'png', 'jpg', 'jpeg', 'pdf'}
@@ -17,28 +20,28 @@ def allowed_file(filename):
 def index():
     return render_template('index.html')
 
-@app.route('/sitemap.xml')
-def sitemap():
-    # os.getcwd() akan mengambil direktori utama proyek di Vercel
-    return send_from_directory(os.getcwd(), 'sitemap.xml', mimetype='application/xml')
+# --- RUTE MANUAL UNTUK MEMPERBAIKI ERROR 404 ---
 
-# Rute tambahan untuk PWA
 @app.route('/manifest.json')
 def manifest():
-    return send_from_directory(os.getcwd(), 'manifest.json', mimetype='application/json')
+    return send_from_directory(ROOT_DIR, 'manifest.json', mimetype='application/json')
 
 @app.route('/sw.js')
 def sw():
-    return send_from_directory(os.getcwd(), 'sw.js', mimetype='application/javascript')
+    return send_from_directory(ROOT_DIR, 'sw.js', mimetype='application/javascript')
 
-# TAMBAHKAN INI: Agar browser bisa membaca ikon di folder static
 @app.route('/static/<path:filename>')
 def send_static(filename):
-    # Mengarahkan ke folder static yang sejajar dengan folder api
-    root_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    static_folder = os.path.join(root_path, 'static')
+    # Memaksa server mencari folder static di luar folder api
+    static_folder = os.path.join(ROOT_DIR, 'static')
     return send_from_directory(static_folder, filename)
-    
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(ROOT_DIR, 'sitemap.xml', mimetype='application/xml')
+
+# --- LOGIKA KOMPRESI ---
+
 @app.route('/compress', methods=['POST'])
 def compress():
     if 'file' not in request.files:
@@ -72,7 +75,5 @@ def compress():
     except Exception as e:
         return f"Error: {e}"
 
-
-
-
-
+if __name__ == "__main__":
+    app.run(debug=True)
